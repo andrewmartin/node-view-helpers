@@ -5,6 +5,7 @@
 
 var url = require('url')
   , qs = require('querystring')
+  , CONFIG;
 
 /**
  * Helpers method
@@ -14,7 +15,10 @@ var url = require('url')
  * @api public
  */
 
-function helpers (name) {
+function helpers (name, config) {
+  if (config) {
+    CONFIG = config;
+  }
   return function (req, res, next) {
     res.locals.appName = name || 'App'
     res.locals.title = name || 'App'
@@ -30,6 +34,7 @@ function helpers (name) {
     res.locals.formatDatetime = formatDatetime
     res.locals.stripScript = stripScript
     res.locals.createPagination = createPagination(req)
+    res.locals.basePath = basePath
 
     if (typeof req.flash !== 'undefined') {
       res.locals.info = req.flash('info')
@@ -144,4 +149,20 @@ function formatDatetime (date) {
 
 function stripScript (str) {
   return str.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+}
+
+/**
+ * Internal Link Helper
+ * Set a link with or without a base path prepended to it
+ * - useful when nesting routers under another path.
+ * - use in views; basePath('link-text-here')
+ * - set in config; no trailing slash; basePath: '/videos'
+ * @param {Object} obj
+ * @return {String}
+ * @api private
+ */
+function basePath(text) {
+  var conf = CONFIG ? CONFIG : {};
+  var basePath = CONFIG.basePath ? CONFIG.basePath : '';
+  return basePath + '/' + text;
 }
