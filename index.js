@@ -34,7 +34,7 @@ function helpers (name, config) {
     res.locals.formatDatetime = formatDatetime
     res.locals.stripScript = stripScript
     res.locals.createPagination = createPagination(req)
-    res.locals.basePath = basePath
+    res.locals.linkWithBasePath = createLinkFromBase
 
     if (typeof req.flash !== 'undefined') {
       res.locals.info = req.flash('info')
@@ -161,7 +161,7 @@ function stripScript (str) {
  * @return {String}
  * @api private
  */
-function basePath(text) {
+function createLinkFromBase(text) {
   var conf = CONFIG ? CONFIG : {};
   var basePath = CONFIG.basePath ? CONFIG.basePath : '';
   return basePath + '/' + text;
